@@ -1,9 +1,12 @@
+import Navbar from "./sections/Navbar"
 
 
 
 const App = () => {
   return (
-    <div>App</div>
+    <div className="relative w-screen min-h-screen">
+      <Navbar />
+    </div>
   )
 }
 
