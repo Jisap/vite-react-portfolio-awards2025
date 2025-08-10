@@ -2,10 +2,16 @@ import { useRef } from "react"
 import AnimatedTextLines from "../components/AnimatedTextLines";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap/all";
+import { Canvas } from "@react-three/fiber";
+import { Planet } from "../components/Planet";
+import { Environment, Float, Lightformer } from "@react-three/drei";
+import { useMediaQuery } from "react-responsive";
+
 
 
 const Hero = () => {
 
+  const isMobile = useMediaQuery({ maxWidth: 853 });
   const contextRef = useRef(null);
   const headerRef = useRef(null);
 
@@ -68,6 +74,58 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      <figure 
+        className="absolute inset-0 -z-50"
+        style={{
+          width: "100vw", height: "100vh",
+        }}  
+      >
+        <Canvas                                                          // Se crea un lienzo 3D gracias a Three.js
+          shadows                                                        // Activa el renderizado de sombras  
+          camera={{position: [0, 0, -10], fov: 17.5, near: 1, far: 20}}  // Configura la cámara virtual a traves de la cual vemos la escena 
+        >  
+          {/* Añade una luz ambiental que ilumina todos los objetos */}
+          <ambientLight intensity={0.5} />
+          {/* Hace que cualquier objeto que envuelva a sus hijo flote suavemente */}
+          <Float speed={0.5}>
+            <Planet scale={isMobile ? 0.7 : 1} />
+          </Float>
+          {/* Componente personalizado que carga el modelo 3d */}
+          <Planet />
+
+          {/* Componente que añade efectos de iluminación realistas */}
+          <Environment resolution={256}>
+            <group rotation={[-Math.PI / 3, 4, 1]}>
+              <Lightformer 
+                form={"circle"}
+                intensity={2}
+                position={[0, 5, -9]}
+                scale={10}
+              />
+              <Lightformer
+                form={"circle"}
+                intensity={2}
+                position={[0, 3, 1]}
+                scale={10}
+              />
+              <Lightformer
+                form={"circle"}
+                intensity={2}
+                position={[-5, -1, -1]}
+                scale={10}
+              />
+              <Lightformer
+                form={"circle"}
+                intensity={2}
+                position={[10, 1, 0]}
+                scale={16}
+              />
+            </group>
+          </Environment>
+        </Canvas>
+
+      </figure>
     </section>
   )
 }
