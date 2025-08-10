@@ -89,7 +89,7 @@ const Hero = () => {
           <ambientLight intensity={0.5} />
           {/* Hace que cualquier objeto que envuelva a sus hijo flote suavemente */}
           <Float speed={0.5}>
-            <Planet scale={isMobile ? 0.7 : 1} />
+            <Planet scale={isMobile ? 0.7 : 0.8} />
           </Float>
           {/* Componente personalizado que carga el modelo 3d */}
           <Planet />
