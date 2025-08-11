@@ -6,6 +6,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const ServiceSummary = () => {
 
+  // Array que define los servicios y sus propiedades de animación.
+  // Esta estructura centraliza la configuración, haciendo que añadir,
+  // modificar o eliminar animaciones sea mucho más sencillo.
   const services = [
     { id: "#title-service-1", xPercent: 20 },
     { id: "#title-service-2", xPercent: -30 },
@@ -14,12 +17,14 @@ const ServiceSummary = () => {
   ];
 
   useGSAP(() => {
-    services.forEach((service) => {
-      gsap.to(service.id, {
-        xPercent: service.xPercent,
+    // Iteramos sobre el array de servicios para crear una animación para cada uno.
+    // Esto evita repetir el mismo bloque de código `gsap.to()` para cada elemento.
+    services.forEach((service) => {          // La animación va DESDE el estado inicial en el HTML/CSS HACIA el estado definido aquí.
+      gsap.to(service.id, {                  // El selector del elemento a animar
+        xPercent: service.xPercent,          // El porcentaje de movimiento horizontal (Estado final)
         scrollTrigger: {
-          trigger: service.id,
-          scrub: true,
+          trigger: service.id,               // El elemento que dispara la animación al entrar en el viewport.
+          scrub: true,                       // Vincula el progreso de la animación directamente con el scroll. 
         },
       });
     });
