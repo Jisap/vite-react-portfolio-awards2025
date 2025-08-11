@@ -54,7 +54,9 @@ const Services = () => {
           style={
             isDesktop
               ? {
-                // Cada tarjeta se "pega" un poco más abajo que la anterior, creando el apilamiento.
+                // Cada tarjeta se "pega" (sticky) un poco más abajo que la anterior, creando el apilamiento.
+                // Top define donde se "pega". 10vh es la base para index=0 -> se pegará a un 10% de la altura del viewport
+                // ${index * 5}em: Esta es la parte que cambia. Por cada tarjeta nueva, se añaden 5em adicionales a la distancia top.
                 top: `calc(10vh + ${index * 5}em)`,
                 // Se añade margen inferior para dar espacio de scroll y que el efecto funcione.
                 marginBottom: `${(servicesData.length - index - 1) * 5}rem`,
