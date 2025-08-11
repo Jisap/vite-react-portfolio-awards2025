@@ -22,25 +22,25 @@ export function Planet(props) {
     });
     tl.from(
       shperesContainer.current.rotation,       // Animación de rotación de los planetas
-      {
-        x: 0,
-        y: Math.PI,
-        z: -Math.PI,
+      {                                        // En Three.js, la rotación es un objeto con propiedades x, y, y z que representan la rotación en cada eje (en radianes).
+        x: 0,                                  // La animación comenzará con una rotación de 0 grados en el eje X.
+        y: Math.PI,                            // Comenzará con una rotación de 180 grados (Math.PI radianes) en el eje Y.
+        z: -Math.PI,                           // Comenzará con una rotación de -180 grados en el eje Z. 
         duration: 10,
         ease: "power1.inOut",
       },
-      "-=25%"
+      "-=25%"                                  // La animación anterior dura 3s. El 25% de 3s = 2.5s. La animación comenzará a los (3s - 2.5s) = 0.5s de haber empezado la linea de tiempo
     );
     tl.from(
-      ringContainer.current.rotation,           // Animación de rotación del anillo
+      ringContainer.current.rotation,          // Animación de rotación del anillo
       {
-        x: 0.8,
+        x: 0.8,                                // Parte de una inclinación de 0.8 radianes en el eje x. 
         y: 0,
         z: 0,
         duration: 10,
         ease: "power1.inOut",
       },
-      "<"
+      "<"                                      // Comienza al mismo tiempo que la animación anterior.
     );
   }, []);
 
