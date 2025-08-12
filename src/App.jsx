@@ -1,5 +1,6 @@
 
 import About from "./sections/About"
+import ContactSummary from "./sections/ContactSummary"
 import Hero from "./sections/Hero"
 import Navbar from "./sections/Navbar"
 import Services from "./sections/Services"
@@ -18,7 +19,7 @@ const App = () => {
       <Services />
       <About />
       <Works />
-      <section className="min-h-screen" />
+      <ContactSummary />
       <section className="min-h-screen" />
       <section className="min-h-screen" />
     </div>
