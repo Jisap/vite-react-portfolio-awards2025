@@ -45,65 +45,90 @@ const Marquee = ({
       distanceToLoop,
       item,
       i;
+
+
     gsap.set(items, {
-      // convert "x" to "xPercent" to make things responsive, and populate the widths/xPercents Arrays to make lookups faster.
-      xPercent: (i, el) => {
+      // Para cada elemento GSAP ejecutará esta función 
+      // xPercent es una propiedad especial de GSAP que mueve un elemento un porcentaje de su propio ancho.
+      // Indicara pues cuanto se mueve el elemento respecto al ancho total de la línea de tiempo.
+      xPercent: (i, el) => { 
+        // 1. Calcula y guarda el ancho del elemento para usarlo después
         let w = (widths[i] = parseFloat(gsap.getProperty(el, "width", "px")));
+
         xPercents[i] = snap(
           (parseFloat(gsap.getProperty(el, "x", "px")) / w) * 100 +
           gsap.getProperty(el, "xPercent")
         );
+        // 2. Devuelve el valor calculado para que GSAP lo aplique al elemento.
         return xPercents[i];
       },
     });
+    
+    // 3. Reinicia la propiedad 'x' (translateX) a 0.
+    //    Esto asegura que la posición horizontal solo sea controlada por 'xPercent',
+    //    evitando conflictos y creando un estado limpio para la animación.
     gsap.set(items, { x: 0 });
+    
+    // 4. Calcula el ancho total de todos los elementos juntos.
+    //    Esto es crucial para que el bucle sea perfecto.
     totalWidth =
-      items[length - 1].offsetLeft +
-      (xPercents[length - 1] / 100) * widths[length - 1] -
-      startX +
-      items[length - 1].offsetWidth *
-      gsap.getProperty(items[length - 1], "scaleX") +
-      (parseFloat(config.paddingRight) || 0);
+      items[length - 1].offsetLeft +                             // Posición del último elemento.
+      (xPercents[length - 1] / 100) * widths[length - 1] -       // Añade su posición porcentual.
+      startX +                                                   // Resta la posición inicial del primer elemento.
+      items[length - 1].offsetWidth *                            // Añade el ancho completo del último elemento.
+      gsap.getProperty(items[length - 1], "scaleX") +            // Considera su escala.
+      (parseFloat(config.paddingRight) || 0);                    // Añade un padding extra para evitar saltos.
+
+    // 5. Bucle para crear la animación de cada elemento.
     for (i = 0; i < length; i++) {
       item = items[i];
-      curX = (xPercents[i] / 100) * widths[i];
-      distanceToStart = item.offsetLeft + curX - startX;
+      curX = (xPercents[i] / 100) * widths[i];                   // Posición X actual del elemento.
+      distanceToStart = item.offsetLeft + curX - startX;         // Distancia desde el inicio del contenedor.
       distanceToLoop =
-        distanceToStart + widths[i] * gsap.getProperty(item, "scaleX");
+        distanceToStart + widths[i] * gsap.getProperty(item, "scaleX"); // Distancia que debe recorrer para salir de la pantalla.
+      
+      // 6. Crea la animación principal para cada elemento.
       tl.to(
         item,
         {
+          // Mueve el elemento hacia la izquierda hasta que desaparece.
           xPercent: snap(((curX - distanceToLoop) / widths[i]) * 100),
-          duration: distanceToLoop / pixelsPerSecond,
+          duration: distanceToLoop / pixelsPerSecond, // La duración se basa en la velocidad constante.
         },
-        0
+        0 // Todas las animaciones 'to' empiezan al mismo tiempo (posición 0 en la timeline).
       )
+        // 7. Crea la animación de "reaparición" para el mismo elemento.
         .fromTo(
           item,
           {
+            // Lo "teletransporta" inmediatamente a la derecha, fuera de la pantalla.
             xPercent: snap(
               ((curX - distanceToLoop + totalWidth) / widths[i]) * 100
             ),
           },
           {
+            // Lo anima de vuelta a su posición original.
             xPercent: xPercents[i],
             duration:
               (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
             immediateRender: false,
           },
-          distanceToLoop / pixelsPerSecond
+          distanceToLoop / pixelsPerSecond // Esta animación empieza justo cuando la anterior termina.
         )
+        // 8. Añade una etiqueta a la línea de tiempo para cada elemento.
         .add("label" + i, distanceToStart / pixelsPerSecond);
-      times[i] = distanceToStart / pixelsPerSecond;
+      times[i] = distanceToStart / pixelsPerSecond; // Guarda el tiempo de la etiqueta.
     }
-    function toIndex(index, vars) { // Función que pone en marcha el horizontalLoop
+    
+    // --- Funciones de control  ---
+    function toIndex(index, vars) {                      // Función para animar a un índice específico.
       vars = vars || {};
       Math.abs(index - curIndex) > length / 2 &&
-        (index += index > curIndex ? -length : length); // always go in the shortest direction
+        (index += index > curIndex ? -length : length);  // Va por el camino más corto.
       let newIndex = gsap.utils.wrap(0, length, index),
         time = times[newIndex];
       if (time > tl.time() !== index > curIndex) {
-        // if we're wrapping the timeline's playhead, make the proper adjustments
+        // Ajusta el tiempo si se necesita dar la vuelta completa a la timeline.
         vars.modifiers = { time: gsap.utils.wrap(0, tl.duration()) };
         time += tl.duration() * (index > curIndex ? 1 : -1);
       }
@@ -111,12 +136,19 @@ const Marquee = ({
       vars.overwrite = true;
       return tl.tweenTo(time, vars);
     }
-    tl.next = (vars) => toIndex(curIndex + 1, vars);
-    tl.previous = (vars) => toIndex(curIndex - 1, vars);
-    tl.current = () => curIndex;
-    tl.toIndex = (index, vars) => toIndex(index, vars);
-    tl.times = times;
-    tl.progress(1, true).progress(0, true); // pre-render for performance
+    
+    // --- Métodos de ayuda adjuntos a la línea de tiempo ---
+    tl.next = (vars) => toIndex(curIndex + 1, vars);            // Va al siguiente elemento.
+    tl.previous = (vars) => toIndex(curIndex - 1, vars);        // Va al elemento anterior.
+    tl.current = () => curIndex;                                // Devuelve el índice actual.
+    tl.toIndex = (index, vars) => toIndex(index, vars);         // Va a un índice específico.
+    tl.times = times;                                           // Expone los tiempos de las etiquetas.
+
+    // 9. Pre-renderiza la animación para un mejor rendimiento inicial.
+    //    Salta al final y luego al principio para que todos los estados iniciales se calculen.
+    tl.progress(1, true).progress(0, true); 
+    
+    // 10. Si se especifica, invierte la dirección de la animación.
     if (config.reversed) {
       tl.vars.onReverseComplete();
       tl.reverse();
@@ -124,31 +156,41 @@ const Marquee = ({
     return tl;
   }
 
+  // --- Hook de React para ejecutar la lógica de la animación ---
   useEffect(() => {
+    // 1. Inicia el bucle horizontal con los elementos del DOM.
     const tl = horizontalLoop(itemsRef.current, {
-      repeat: -1,
-      paddingRight: 30,
-      reversed: reverse,
+      repeat: -1,             // Repetición infinita.
+      paddingRight: 30,       // Padding extra para que no haya saltos.
+      reversed: reverse,      // Dirección de la marquesina.
     });
 
+    // 2. Crea un observador para la interacción del scroll.
     Observer.create({
+      // Se ejecuta cada vez que el usuario hace scroll vertical.
       onChangeY(self) {
+        // Acelera o decelera la animación basándose en la dirección del scroll.
         let factor = 2.5;
+        // Invierte el factor si la marquesina va en reversa o el scroll es hacia arriba.
         if ((!reverse && self.deltaY < 0) || (reverse && self.deltaY > 0)) {
           factor *= -1;
         }
+        // 3. Crea una pequeña animación para la velocidad (timeScale).
         gsap
           .timeline({
             defaults: {
               ease: "none",
             },
           })
+          // Acelera bruscamente.
           .to(tl, { timeScale: factor * 2.5, duration: 0.2, overwrite: true })
+          // Vuelve suavemente a la velocidad normal.
           .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
       },
     });
+    // 4. Función de limpieza: detiene la animación cuando el componente se desmonta.
     return () => tl.kill();
-  }, [items, reverse]);
+  }, [items, reverse]); // Se vuelve a ejecutar si los items o la dirección cambian.
 
   return (
     <div 
