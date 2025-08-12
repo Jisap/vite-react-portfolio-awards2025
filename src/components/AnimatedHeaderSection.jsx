@@ -10,7 +10,7 @@ const AnimatedHeaderSection = ({
   title,
   text,
   textColor,
-  withScrollTrigger = false, // Prop para decidir si la animación se activa con el scroll. Por defecto es false.
+  withScrollTrigger = false,       // Prop para decidir si la animación se activa con el scroll. Por defecto es false.
 }) => {
 
   const contextRef = useRef(null); // Ref para el contenedor principal, usado como trigger del scroll.

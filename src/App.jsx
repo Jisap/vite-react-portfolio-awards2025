@@ -4,6 +4,7 @@ import Hero from "./sections/Hero"
 import Navbar from "./sections/Navbar"
 import Services from "./sections/Services"
 import ServiceSummary from "./sections/ServiceSummary"
+import Works from "./sections/Works"
 
 
 
@@ -16,7 +17,7 @@ const App = () => {
       <ServiceSummary />
       <Services />
       <About />
-      <section className="min-h-screen" />
+      <Works />
       <section className="min-h-screen" />
       <section className="min-h-screen" />
       <section className="min-h-screen" />
