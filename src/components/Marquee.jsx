@@ -13,30 +13,34 @@ const Marquee = ({
   reverse = false,
 }) => {
 
-  const containerRef = useRef(null);
-  const itemsRef = useRef([]);
+  const containerRef = useRef(null);       // Ref para el contenedor principal.
+  const itemsRef = useRef([]);             // Ref para guardar un array de los elementos de la marquesina.
 
-  function horizontalLoop(items, config) {
-    items = gsap.utils.toArray(items);
+  function horizontalLoop(items, config) { // Motor de la animación
+    
+    items = gsap.utils.toArray(items);                          // Convierte los elementos del DOM en un array que GSAP pueda manejar. 
     config = config || {};
-    let tl = gsap.timeline({
-      repeat: config.repeat,
-      paused: config.paused,
-      defaults: { ease: "none" },
-      onReverseComplete: () =>
+
+    let tl = gsap.timeline({                                    // Crea la linea de tiempo principal de la animación  
+      repeat: config.repeat,                                    // Añade a dicha linea las props necesarias. Repeat indica cuantas veces se repite (-1 infinito).
+      paused: config.paused,                                    // Si la animación debe empezar pausada o no.
+      defaults: { ease: "none" },                               // Para que el movimiento sea lineal y constante sin aceleraciones ni frenadas
+      onReverseComplete: () =>                                  // Función que se ejecuta al terminar la animación en sentido inverso.
         tl.totalTime(tl.rawTime() + tl.duration() * 100),
     }),
-      length = items.length,
-      startX = items[0].offsetLeft,
-      times = [],
-      widths = [],
-      xPercents = [],
+      length = items.length,                                    // Se definen acontinuación las variables necesarias para la función horizontalLoop
+      startX = items[0].offsetLeft,                             // La posición horizontal inicial del primer elemento.
+      times = [],                                               // array para guardar los tiempos de inicio de la animación de cada elemento.
+      widths = [],                                              // array para guardar el ancho en píxeles de cada elemento
+      xPercents = [],                                           // array para guardar la posición x de cada elemento como un porcentaje
       curIndex = 0,
-      pixelsPerSecond = (config.speed || 1) * 100,
+      pixelsPerSecond = (config.speed || 1) * 100,              // Calcula la velocidad de la animación en píxeles por segundo.
       snap =
-        config.snap === false ? (v) => v : gsap.utils.snap(config.snap || 1), // some browsers shift by a pixel to accommodate flex layouts, so for example if width is 20% the first element's width might be 242px, and the next 243px, alternating back and forth. So we snap to 5 percentage points to make things look more natural
-      totalWidth,
-      curX,
+        config.snap === false                                   // Una función de utilidad de GSAP para redondear valores y evitar saltos de píxeles en algunos navegadores.
+          ? (v) => v 
+          : gsap.utils.snap(config.snap || 1),   
+      totalWidth,                                               // variable que guardará el ancho total de todos los elementos juntos. 
+      curX,                                                     // El resto de variables temporales se usan dentro del bucle for para los cálculos de cada elemento individual.  
       distanceToStart,
       distanceToLoop,
       item,
@@ -92,7 +96,7 @@ const Marquee = ({
         .add("label" + i, distanceToStart / pixelsPerSecond);
       times[i] = distanceToStart / pixelsPerSecond;
     }
-    function toIndex(index, vars) {
+    function toIndex(index, vars) { // Función que pone en marcha el horizontalLoop
       vars = vars || {};
       Math.abs(index - curIndex) > length / 2 &&
         (index += index > curIndex ? -length : length); // always go in the shortest direction
