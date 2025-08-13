@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import Marquee from '../components/Marquee';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import Marquee2 from '../components/Markee2';
 
 const ContactSummary = () => {
 
@@ -73,7 +74,7 @@ const ContactSummary = () => {
       ref={containerRef}
       className='flex flex-col items-center justify-between min-h-screen gap-12 mt-16'
     >
-      <Marquee items={items} />
+      <Marquee2 items={items} />
       <div className='overflow-hidden font-light text-center contact-text-responsive'>
         <p>
           " Let's build a <br />
@@ -82,7 +83,7 @@ const ContactSummary = () => {
           web application <span className='text-gold'>together</span> "
         </p>
       </div>
-      <Marquee
+      <Marquee2
         items={items2}
         reverse={true}
         className="text-black bg-transparent border-y-2"
