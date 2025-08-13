@@ -72,9 +72,9 @@ const Marquee = ({
     // 4. Calcula el ancho total de todos los elementos juntos.
     //    Esto es crucial para que el bucle sea perfecto.
     totalWidth =
-      items[length - 1].offsetLeft +                             // Posición del último elemento.
-      (xPercents[length - 1] / 100) * widths[length - 1] -       // Añade su posición porcentual.
-      startX +                                                   // Resta la posición inicial del primer elemento.
+      items[length - 1].offsetLeft +                             // Obtiene la distancia en píxeles desde el borde izquierdo del contenedor (containerRef) hasta el borde izquierdo del último elemento de la marquesina.
+      (xPercents[length - 1] / 100) * widths[length - 1] -       // calcula cuánto se ha movido el último elemento a través de xPercent y lo suma a la posición.
+      startX +                                                   // startX guarda la posición inicial del primer elemento. Al restarlo estamos calculando la distancia neta entre el inicio del primer elemento y el inicio del último. Esto nos da el ancho que ocupan todos los elementos, excepto el ancho del último.
       items[length - 1].offsetWidth *                            // Añade el ancho completo del último elemento.
       gsap.getProperty(items[length - 1], "scaleX") +            // Considera su escala.
       (parseFloat(config.paddingRight) || 0);                    // Añade un padding extra para evitar saltos.
