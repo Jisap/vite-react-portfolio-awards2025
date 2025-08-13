@@ -1,8 +1,8 @@
 import React, { useRef } from 'react'
-import Marquee from '../components/Marquee';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Marquee2 from '../components/Markee2';
+import { ScrollTrigger } from "gsap/all";
 
 const ContactSummary = () => {
 
@@ -23,6 +23,11 @@ const ContactSummary = () => {
   ];
 
   useGSAP(() => {
+    // ¡Esta es la solución!
+    // Normaliza el comportamiento del scroll, resolviendo conflictos entre plugins.
+    // Lo ideal es llamar a esta función una sola vez en el componente principal de tu app (App.jsx).
+    ScrollTrigger.normalizeScroll(true);
+
     // Se crea una animación para el elemento <section> referenciado por containerRef.
     // No se animan propiedades como 'x' u 'opacity', porque el único propósito
     // de este tween es controlar el ScrollTrigger.
