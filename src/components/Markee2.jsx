@@ -88,9 +88,15 @@ const Marquee2 = ({
 
   return (
     <div className={`w-full overflow-hidden flex items-center ${className}`}>
-      <div ref={marqueeRef} className="flex whitespace-nowrap">
+      <div 
+        ref={marqueeRef} 
+        className="flex whitespace-nowrap"
+      >
         {repeatedItems.map((text, index) => (
-          <span key={index} className="flex items-center px-16 marquee-text-responsive font-light uppercase shrink-0 gap-x-32">
+          <span 
+            key={index} 
+            className="flex items-center px-16 marquee-text-responsive font-light uppercase shrink-0 gap-x-32"
+          >
             {text} <Icon icon={icon} className={iconClassName} />
           </span>
         ))}
