@@ -178,3 +178,8 @@ export const socials = [
   { name: "LinkedIn", href: "https://www.linkedin.com/in/ali-sanati/" },
   { name: "GitHub", href: "https://github.com/Ali-Sanati" },
 ];
+
+export const contactInfo = {
+  email: "JohnDoe@gmail.com",
+  phone: "+33 7 12 12 32 12",
+};

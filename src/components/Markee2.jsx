@@ -28,11 +28,13 @@ const Marquee2 = ({
   const animation = useRef(null);
 
   // Para que el bucle sea perfecto, duplicamos el contenido.
-  // Esto asegura que siempre haya contenido para mostrar mientras el original se desplaza.
   const repeatedItems = items.length > 0 ? [...items, ...items] : [];
 
   useGSAP(() => {
     if (!marqueeRef.current || repeatedItems.length === 0) return;
+
+    // Comprobación de accesibilidad para reducir el movimiento.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Ancho total de la mitad del contenido (el set original de items).
     const totalWidth = marqueeRef.current.scrollWidth / 2;
@@ -60,20 +62,31 @@ const Marquee2 = ({
       },
     });
 
+    // Si el usuario prefiere movimiento reducido, pausamos la animación.
+    if (prefersReducedMotion) {
+      animation.current.pause();
+      return;
+    }
+
     // Control de velocidad con el scroll usando Observer.
+    let timeout;
     const observer = Observer.create({
       onChangeY(self) {
-        const timeScaleFactor = 1 + Math.abs(self.deltaY) / 100;
-        const directionFactor = self.deltaY < 0 ? 1 : -1;
-        
+        const baseTimeScale = reverse ? -1 : 1;
+        const direction = self.deltaY < 0 ? 1 : -1;
+        const newTimeScale = baseTimeScale * (1 + Math.abs(self.deltaY) / 50) * direction;
+
         // Acelera o decelera suavemente la animación.
         gsap.to(animation.current, {
-          timeScale: timeScaleFactor * directionFactor * (reverse ? -1 : 1),
+          timeScale: newTimeScale,
           duration: 0.2,
-          onComplete: () => {
-            // Vuelve a la velocidad normal después de la interacción.
-            gsap.to(animation.current, { timeScale: reverse ? -1 : 1, duration: 1, ease: "power1.inOut" });
-          }
+          ease: "power1.out",
+          overwrite: true
+        });
+
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          gsap.to(animation.current, { timeScale: baseTimeScale, duration: 1, ease: "power1.inOut" });
         });
       },
     });
@@ -82,12 +95,13 @@ const Marquee2 = ({
     return () => {
       observer.kill();
       animation.current.kill();
+      clearTimeout(timeout);
     };
 
   }, { dependencies: [items, speed, reverse], scope: marqueeRef });
 
   return (
-    <div className={`w-full overflow-hidden flex items-center ${className}`}>
+    <div className={`w-full overflow-hidden flex items-center h-20 ${className}`}>
       <div 
         ref={marqueeRef} 
         className="flex whitespace-nowrap"

@@ -1,22 +1,12 @@
-import { useGSAP } from "@gsap/react";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
-import Marquee from "../components/Marquee";
-import { socials } from "../constants";
-import gsap from "gsap";
+import { socials, contactInfo } from "../constants";
 import Marquee2 from "../components/Markee2";
 
 const Contact = () => {
-
-  const text = `Got a question, how or project Idea?
-    WE’D love to hear from you and discus further!`;
+  const text = `Got a question, have a project idea?
+    WE’D love to hear from you and discuss it further!`;
   
-    const items = [
-    "just imagin, I code",
-    "just imagin, I code",
-    "just imagin, I code",
-    "just imagin, I code",
-    "just imagin, I code",
-  ];
+  const items = Array(5).fill("just imagin, I code");
 
   return (
     <section
@@ -37,23 +27,23 @@ const Contact = () => {
               <h2>E-mail</h2>
               <div className="w-full h-px my-2 bg-white/30" />
               <p className="text-xl tracking-wider lowercase md:text-2xl lg:text-3xl">
-                JohnDoe@gmail.com
+                {contactInfo.email}
               </p>
             </div>
             <div className="social-link">
               <h2>Phone</h2>
               <div className="w-full h-px my-2 bg-white/30" />
               <p className="text-xl lowercase md:text-2xl lg:text-3xl">
-                +33 7 12 12 32 12
+                {contactInfo.phone}
               </p>
             </div>
             <div className="social-link">
               <h2>Social Media</h2>
               <div className="w-full h-px my-2 bg-white/30" />
               <div className="flex flex-wrap gap-2">
-                {socials.map((social, index) => (
+                {socials.map((social) => (
                   <a
-                    key={index}
+                    key={social.name}
                     href={social.href}
                     className="text-xs leading-loose tracking-wides uppercase md:text-sm hover:text-white/80 transition-colors duration-200"
                   >
