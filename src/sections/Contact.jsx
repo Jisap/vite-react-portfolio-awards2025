@@ -1,12 +1,28 @@
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import { socials, contactInfo } from "../constants";
 import Marquee2 from "../components/Markee2";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 const Contact = () => {
   const text = `Got a question, have a project idea?
     WE’D love to hear from you and discuss it further!`;
   
   const items = Array(5).fill("just imagin, I code");
+
+  useGSAP(() => {
+    gsap.from(".social-link", {
+      y: 100,
+      opacity: 0,
+      delay: 0.5,
+      duration: 1,
+      stagger: 0.3,
+      ease: "back.out",
+      scrollTrigger: {
+        trigger: ".social-link",
+      },
+    });
+  }, []);
 
   return (
     <section

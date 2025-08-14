@@ -118,9 +118,11 @@ const Navbar = () => {
                 ref={(el) => (linksRef.current[index] = el)}>
                 <Link
                   to={`${section}`}
+                  spy={true}
                   smooth
                   offset={0}
                   duration={2000}
+                  activeClass="text-yellow-500" // Esta clase se aplicará cuando el link esté activo
                   className="tansition-all duration-300 cursor-pointer hover:text-white"
                 >
                   {section}
